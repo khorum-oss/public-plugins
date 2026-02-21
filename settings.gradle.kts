@@ -21,7 +21,9 @@ pluginManagement {
 
 include(
     "ai:claude:claude-code-skill-resolver",
+    "pipeline",
     "publishing:digital-ocean-spaces",
     "publishing:maven-generated-artifacts",
+    "secrets",
     "test-core"
 )
