@@ -1,0 +1,8 @@
+.idea
+.gradle
+.DS_Store
+.kotlin
+build
+
+secret.properties
+personal*
