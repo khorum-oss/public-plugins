@@ -34,7 +34,7 @@ abstract class DefaultOutputPlugin : Plugin<Project> {
         task.projectVersion.set(project.version.toString())
         task.debugOutputFile.set(
             project.layout.buildDirectory.file(
-                "violabs/tasks/$folderName/${fileName}_output.json"
+                "khorum-oss/tasks/$folderName/${fileName}_output.json"
             )
         )
     }
