@@ -9,6 +9,8 @@ A collection of open-source Gradle plugins.
 | [Claude Code Skill Resolver](ai/claude/claude-code-skill-resolver) | Downloads and installs Claude Code skills from GitHub repositories     |
 | [Digital Ocean Spaces](publishing/digital-ocean-spaces)            | Publishes artifacts (JARs, POMs, Dokka) to DigitalOcean Spaces         |
 | [Maven Generated Artifacts](publishing/maven-generated-artifacts)  | Generates Maven artifacts (sources, Javadoc, KDoc JARs) for publishing |
+| [Pipeline](pipeline)                                               | CI/CD tasks for detecting changed modules and printing module info     |
+| [Secrets](secrets)                                                 | Loads secrets from files or system properties into Gradle extra properties |
 
 ## Plugin Repository
 
@@ -52,4 +54,10 @@ Internal notes for maintainers.
 
 # Maven Generated Artifacts
 ./gradlew publishing:maven-generated-artifacts:clean publishing:maven-generated-artifacts:uploadToDigitalOceanSpaces
+
+# Pipeline
+./gradlew :pipeline:clean :pipeline:uploadToDigitalOceanSpaces
+
+# Secrets
+./gradlew :secrets:clean :secrets:uploadToDigitalOceanSpaces
 ```
