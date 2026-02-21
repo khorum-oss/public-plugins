@@ -1,4 +1,4 @@
-package org.khorum.oss.plugins.local.secrets
+package org.khorum.oss.plugins.open.secrets
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
