@@ -40,7 +40,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("pipelinePlugin") {
+        create("secretsPlugin") {
             id = "org.khorum.oss.plugins.open.secrets"
             version = version.toString()
             implementationClass = "org.khorum.oss.plugins.open.secrets.SecretsLoaderPlugin"
