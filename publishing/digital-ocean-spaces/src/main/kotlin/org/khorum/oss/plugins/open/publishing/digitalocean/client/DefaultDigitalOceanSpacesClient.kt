@@ -47,10 +47,21 @@ class DefaultDigitalOceanSpacesClient(
 
                 logger.lifecycle("  | Uploading ${file.name} to ${bucket}/$key")
 
+                val contentType = when {
+                    file.name.endsWith(".pom") -> "application/xml"
+                    file.name.endsWith(".jar") -> "application/java-archive"
+                    file.name.endsWith(".module") -> "application/json"
+                    file.name.endsWith(".md5") -> "text/plain"
+                    file.name.endsWith(".sha1") -> "text/plain"
+                    file.name.endsWith(".sha256") -> "text/plain"
+                    else -> "application/octet-stream"
+                }
+
                 val request = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)
                     .acl(ObjectCannedACL.PUBLIC_READ)
+                    .contentType(contentType)
                     .build()
 
                 it.putObject(request, file.toPath())

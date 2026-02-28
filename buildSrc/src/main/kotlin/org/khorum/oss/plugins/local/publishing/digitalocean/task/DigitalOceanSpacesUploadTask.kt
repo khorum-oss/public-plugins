@@ -1,14 +1,13 @@
 package org.khorum.oss.plugins.local.publishing.digitalocean.task
 
 import org.khorum.oss.plugins.local.publishing.digitalocean.adapter.DefaultProjectAdapter
+import org.khorum.oss.plugins.local.publishing.digitalocean.client.DefaultDigitalOceanSpacesClient
 import org.khorum.oss.plugins.local.publishing.digitalocean.client.DigitalOceanSpacesClient
 import org.khorum.oss.plugins.local.publishing.digitalocean.service.CheckVersionDigitalOceanSpacesService
 import org.khorum.oss.plugins.local.publishing.digitalocean.service.UploadToDigitalOceanSpacesService
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import software.amazon.awssdk.services.s3.S3Client
 
 /**
  * Task to upload project artifacts to Digital Ocean Spaces.
@@ -17,10 +16,7 @@ import software.amazon.awssdk.services.s3.S3Client
  * It uses the configuration provided in the `DigitalOceanSpacesExtension`.
  */
 abstract class DigitalOceanSpacesUploadTask : DefaultTask() {
-    @get:Input
-    abstract var checkS3Client: S3Client
-
-    @get:Input
+    @get:Internal
     abstract var digitalOceanSpacesClient: DigitalOceanSpacesClient
 
     @get:Internal
@@ -50,12 +46,15 @@ abstract class DigitalOceanSpacesUploadTask : DefaultTask() {
     @TaskAction
     fun uploadToSpaces() {
         val checkVersion = CheckVersionDigitalOceanSpacesService()
+        val client = digitalOceanSpacesClient
+        val s3Client = (client as? DefaultDigitalOceanSpacesClient)?.s3Client()
+            ?: error("Cannot create S3 client for version check")
 
         val service = uploadService ?: UploadToDigitalOceanSpacesService(
             DefaultProjectAdapter(project, publicationName = publicationName),
-            digitalOceanSpacesClient,
-            checkS3Client,
-            isPlugin = digitalOceanSpacesClient.ext.isPlugin,
+            client,
+            s3Client,
+            isPlugin = client.ext.isPlugin,
             checkVersion,
             publicationName = publicationName
         )

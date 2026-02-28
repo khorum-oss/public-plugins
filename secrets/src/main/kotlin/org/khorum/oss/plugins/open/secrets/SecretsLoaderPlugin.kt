@@ -19,24 +19,34 @@ open class SecretsLoaderPlugin : DefaultOutputPlugin() {
     override fun apply(project: Project) {
         val extension = project.extensions.create<SecretsLoaderExtension>("secretsLoader")
 
+        // Load secrets eagerly so they're available during build script configuration.
+        // Other plugins (e.g. digital-ocean-spaces) read credentials via getPropertyOrEnv
+        // in their DSL blocks, which runs before afterEvaluate.
+        val defaultSecretFile = "secret.properties"
+        val eagerCount: Int = project.rootProject.processSecrets(defaultSecretFile, emptyMap())
+        if (eagerCount > 0) {
+            project.logger.lifecycle("Applying SecretsLoaderPlugin to project: ${project.name}")
+            project.logger.lifecycle(" | [INFO] Loaded $eagerCount secrets from $defaultSecretFile")
+        }
+
         project.afterEvaluate {
-            logger.lifecycle("Applying SecretsLoaderPlugin to project: ${name}")
-            logger.lifecycle(" | [INFO] secretFile: ${extension.secretFile}")
-            logger.lifecycle(" | [INFO] systemProperties: ${extension.systemProperties()}")
-
-            val amountProcessed: Int = rootProject.processSecrets(
-                extension.secretFile ?: "secret.properties",
-                extension.systemProperties()
-            )
-
-            logger.lifecycle(" | [INFO] Processed $amountProcessed secrets into extra properties.")
+            val secretFile = extension.secretFile ?: defaultSecretFile
+            // Re-process if the user configured a custom secret file
+            if (extension.secretFile != null && extension.secretFile != defaultSecretFile) {
+                logger.lifecycle(" | [INFO] Loading secrets from custom file: $secretFile")
+                rootProject.processSecrets(secretFile, extension.systemProperties())
+            } else if (extension.systemProperties().isNotEmpty()) {
+                // Process system properties if configured
+                logger.lifecycle(" | [INFO] Loading system properties into extra properties: ${extension.systemProperties()}")
+                rootProject.processSecrets(secretFile, extension.systemProperties())
+            }
 
             logger.lifecycle(" | [INFO] Registering `checkSecretsExist` task")
             tasks.register("checkSecretsExist", CheckSecretsExistTask::class.java) {
                 this.group = "verification"
                 this.description = "Check if secrets exist in the secret file"
-                this.secretFilePath = project.rootProject.file(extension.secretFile ?: "secret.properties")
-                this.amountFound = amountProcessed
+                this.secretFilePath = project.rootProject.file(secretFile)
+                this.amountFound = eagerCount
 
                 defaultOutputFileDetails(project, this, CheckSecretsExistTask::class)
             }

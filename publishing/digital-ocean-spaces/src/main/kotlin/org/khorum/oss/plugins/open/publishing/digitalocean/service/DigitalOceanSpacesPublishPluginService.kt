@@ -35,7 +35,7 @@ class DigitalOceanSpacesPublishPluginService {
                 group = "verification"
                 description = "Checks if the current version already exists in Digital Ocean Spaces"
                 this.extension.set(extension)
-                this.s3Client = doSpacesClient.s3Client()
+                this.spacesClient = doSpacesClient
                 continueOnFailure.set(extension.continueOnVersionCheckFailure)
             }
 
@@ -56,7 +56,6 @@ class DigitalOceanSpacesPublishPluginService {
                 } else {
                     doSpacesClient
                 }
-                checkS3Client = doSpacesClient.s3Client()
 
                 dependsOn("build")
 

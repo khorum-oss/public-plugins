@@ -1,13 +1,14 @@
 package org.khorum.oss.plugins.local.publishing.digitalocean.task
 
 import org.khorum.oss.plugins.local.publishing.digitalocean.adapter.DefaultProjectAdapter
+import org.khorum.oss.plugins.local.publishing.digitalocean.client.DefaultDigitalOceanSpacesClient
 import org.khorum.oss.plugins.local.publishing.digitalocean.domain.DigitalOceanSpacesExtension
 import org.khorum.oss.plugins.local.publishing.digitalocean.service.CheckVersionDigitalOceanSpacesService
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import software.amazon.awssdk.services.s3.S3Client
 
 /**
  * Task to check if a specific version of an artifact already exists in Digital Ocean Spaces.
@@ -25,8 +26,8 @@ abstract class DigitalOceanSpacesCheckVersionTask : DefaultTask() {
     @get:Input
     abstract val extension: Property<DigitalOceanSpacesExtension>
 
-    @get:Input
-    abstract var s3Client: S3Client
+    @get:Internal
+    abstract var spacesClient: DefaultDigitalOceanSpacesClient
 
     /**
      * Whether to continue execution when version check fails (default: false)
@@ -68,7 +69,7 @@ abstract class DigitalOceanSpacesCheckVersionTask : DefaultTask() {
         CheckVersionDigitalOceanSpacesService().checkVersion(
             DefaultProjectAdapter(project),
             extension.get(),
-            s3Client
+            spacesClient.s3Client()
         )
     }
 }
