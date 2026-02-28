@@ -12,7 +12,7 @@ plugins {
     id("org.khorum.oss.plugins.local.publishing.digital-ocean-spaces")
 }
 
-group = "org.khorum.oss.plugins.open.secrets"
+group = "org.khorum.oss.plugins.open"
 version = secretsVersion
 
 buildscript {
