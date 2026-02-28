@@ -68,14 +68,14 @@ open class MavenGeneratedArtifactsPublishPluginService :
 
             dokkaJavadocJar = tasks.register<Jar>("dokkaJavadocJar") {
                 archiveClassifier.set("javadoc")
-                val dokkaTask = tasks.named("dokkaGeneratePublicationJavadoc")
+                val dokkaTask = tasks.named("dokkaJavadoc")
                 dependsOn(dokkaTask)
                 from(dokkaTask.map { it.outputs.files })
             }
 
             dokkaHtmlJar = tasks.register<Jar>("dokkaHtmlJar") {
                 archiveClassifier.set("kdoc")
-                val dokkaTask = tasks.named("dokkaGeneratePublicationHtml")
+                val dokkaTask = tasks.named("dokkaHtml")
                 dependsOn(dokkaTask)
                 from(dokkaTask.map { it.outputs.files })
             }
@@ -97,6 +97,7 @@ open class MavenGeneratedArtifactsPublishPluginService :
                     }
 
                     pom {
+                        packaging = "jar"
                         name.set(extension.name)
                         description.set(extension.description?.trimIndent())
                         url.set(extension.websiteUrl)
@@ -127,7 +128,42 @@ open class MavenGeneratedArtifactsPublishPluginService :
                             developerConnection.set("scm:git:ssh://$developerConnectionLocation")
                             url.set(scm?.url ?: extension.websiteUrl)
                         }
+
+                        withXml {
+                            sanitizePomXml(asNode())
+                        }
                     }
+                }
+            }
+        }
+    }
+
+    private val MALFORMED_TAG_NAMES = mapOf(
+        "n" to "name",
+        "nam" to "name",
+        "desc" to "description",
+        "descriptio" to "description",
+    )
+
+    fun sanitizePomXml(node: groovy.util.Node) {
+        val children = node.children().toList()
+        for (child in children) {
+            if (child is groovy.util.Node) {
+                val nodeName = child.name().toString().let { raw ->
+                    // Handle qualified names like {namespace}localPart
+                    raw.substringAfterLast("}")
+                        .substringAfterLast(":")
+                        .ifEmpty { raw }
+                }
+
+                val correctedName = MALFORMED_TAG_NAMES[nodeName]
+                if (correctedName != null) {
+                    val value = child.text()
+                    val parent = child.parent()
+                    parent.remove(child)
+                    parent.appendNode(correctedName, value)
+                } else {
+                    sanitizePomXml(child)
                 }
             }
         }

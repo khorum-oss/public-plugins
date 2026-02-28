@@ -44,10 +44,13 @@ class DigitalOceanSpacesPublishPluginService {
                 logger.lifecycle(" | [INFO] Dry run mode enabled, uploads will not be performed.")
             }
 
+            val capitalizedPublicationName = extension.publicationName.replaceFirstChar { it.uppercase() }
+
             // Register the upload task
             tasks.register<DigitalOceanSpacesUploadTask>("uploadToDigitalOceanSpaces") {
                 group = "publishing"
                 description = "Uploads artifacts to Digital Ocean Spaces"
+                this.publicationName = extension.publicationName
                 this.digitalOceanSpacesClient = if (extension.dryRun) {
                     DryRunDigitalOceanSpacesClient(extension, project.logger)
                 } else {
@@ -63,7 +66,7 @@ class DigitalOceanSpacesPublishPluginService {
 
                 // If using the maven-publish plugin, also depend on publish tasks
                 plugins.withId("maven-publish") {
-                    dependsOn("generatePomFileForDigitalOceanSpacesPublication")
+                    dependsOn("generatePomFileFor${capitalizedPublicationName}Publication")
                 }
             }
         }

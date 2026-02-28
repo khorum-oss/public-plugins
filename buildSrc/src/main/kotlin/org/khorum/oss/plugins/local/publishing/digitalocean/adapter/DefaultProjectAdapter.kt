@@ -14,13 +14,14 @@ class DefaultProjectAdapter(
     override val name: String = project.name,
     override val group: String = project.group.toString(),
     override val version: String = project.version.toString(),
-    override val logger: Logger = project.logger
+    override val logger: Logger = project.logger,
+    private val publicationName: String = "digitalOceanSpaces"
 ) : ProjectAdapter {
     override fun pluginAdapters(): List<ProjectAdapter.MavenPublicationAdapter> {
         return project.extensions.getByType<PublishingExtension>()
             .publications
             .withType<MavenPublication>()
-            .matching { it.name == "digitalOceanSpaces" }
+            .matching { it.name == publicationName }
             .map { publication ->
                 DefaultMavenPublicationAdapter(
                     groupId = publication.groupId ?: project.group.toString(),
@@ -38,3 +39,4 @@ class DefaultProjectAdapter(
         override val name: String
     ) : ProjectAdapter.MavenPublicationAdapter
 }
+

@@ -23,6 +23,9 @@ abstract class DigitalOceanSpacesUploadTask : DefaultTask() {
     @get:Input
     abstract var digitalOceanSpacesClient: DigitalOceanSpacesClient
 
+    @get:Internal
+    var publicationName: String = "digitalOceanSpaces"
+
     @get:Internal  // Not part of task inputs since it's behavior, not data
     var uploadService: UploadToDigitalOceanSpacesService? = null
 
@@ -49,11 +52,12 @@ abstract class DigitalOceanSpacesUploadTask : DefaultTask() {
         val checkVersion = CheckVersionDigitalOceanSpacesService()
 
         val service = uploadService ?: UploadToDigitalOceanSpacesService(
-            DefaultProjectAdapter(project),
+            DefaultProjectAdapter(project, publicationName = publicationName),
             digitalOceanSpacesClient,
             checkS3Client,
             isPlugin = digitalOceanSpacesClient.ext.isPlugin,
-            checkVersion
+            checkVersion,
+            publicationName = publicationName
         )
 
         service.uploadToSpaces()
