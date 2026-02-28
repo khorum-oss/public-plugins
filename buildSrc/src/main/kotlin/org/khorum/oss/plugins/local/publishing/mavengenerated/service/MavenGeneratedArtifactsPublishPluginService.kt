@@ -150,6 +150,7 @@ open class MavenGeneratedArtifactsPublishPluginService :
         for (child in children) {
             if (child is groovy.util.Node) {
                 val nodeName = child.name().toString().let { raw ->
+                    // Handle qualified names like {namespace}localPart
                     raw.substringAfterLast("}")
                         .substringAfterLast(":")
                         .ifEmpty { raw }

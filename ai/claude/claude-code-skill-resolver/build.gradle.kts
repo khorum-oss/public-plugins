@@ -7,7 +7,6 @@ val claudeCodeSkillResolver: String by rootProject.extra
 
 plugins {
     `kotlin-dsl`
-    id("org.jetbrains.dokka")
     id("org.khorum.oss.plugins.local.publishing.maven-generated-artifacts")
     id("org.khorum.oss.plugins.local.publishing.digital-ocean-spaces")
 }
@@ -62,7 +61,8 @@ tasks.uploadToDigitalOceanSpaces?.apply {
 }
 
 mavenGeneratedArtifacts {
-    publicationName = "digitalOceanSpaces"  // Must match the name expected by the DO Spaces plugin
+    publicationName = "digitalOceanSpaces"
+    withDokka = false
     name = "Claude Code Skill Resolver"
     description = """
             This plugin will download and copy skills based on url and output structure.

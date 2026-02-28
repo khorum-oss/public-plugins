@@ -7,7 +7,6 @@ val pipelineVersion: String by rootProject.extra
 
 plugins {
     `kotlin-dsl`
-    id("org.jetbrains.dokka")
     id("org.khorum.oss.plugins.local.publishing.maven-generated-artifacts")
     id("org.khorum.oss.plugins.local.publishing.digital-ocean-spaces")
 }
@@ -62,7 +61,8 @@ tasks.uploadToDigitalOceanSpaces?.apply {
 }
 
 mavenGeneratedArtifacts {
-    publicationName = "digitalOceanSpaces"  // Must match the name expected by the DO Spaces plugin
+    publicationName = "digitalOceanSpaces"
+    withDokka = false
     name = "Pipeline Plugin"
     description = """
             This plugin has tasks that help with running CI/CD processes.

@@ -6,7 +6,6 @@ val publishingDigitalOceanSpacesVersion: String by rootProject.extra
 
 plugins {
     `kotlin-dsl`
-    id("org.jetbrains.dokka")
     id("org.khorum.oss.plugins.local.publishing.project-sync")
     id("org.khorum.oss.plugins.local.publishing.maven-generated-artifacts")
     id("org.khorum.oss.plugins.local.publishing.digital-ocean-spaces")
@@ -76,6 +75,7 @@ tasks.uploadToDigitalOceanSpaces?.apply {
 
 mavenGeneratedArtifacts {
     publicationName = "digitalOceanSpaces"
+    withDokka = false
     name = "Digital Ocean Spaces Publishing"
     description = """
             This plugin publishes the build jar, sources jar, pom, and optionally dokka jars.

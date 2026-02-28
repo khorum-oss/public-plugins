@@ -6,7 +6,6 @@ val publishingMavenGeneratedArtifactsVersion: String by rootProject.extra
 
 plugins {
     `kotlin-dsl`
-    id("org.jetbrains.dokka")
     id("org.khorum.oss.plugins.local.publishing.project-sync")
     id("org.khorum.oss.plugins.local.publishing.maven-generated-artifacts")
     id("org.khorum.oss.plugins.local.publishing.digital-ocean-spaces")
@@ -74,6 +73,7 @@ tasks.uploadToDigitalOceanSpaces?.apply {
 
 mavenGeneratedArtifacts {
     publicationName = "digitalOceanSpaces"
+    withDokka = false
     name = "Maven Generated Artifacts"
     description = """
             This plugin generates Maven artifacts such as sources, Javadoc, and KDoc JARs.
