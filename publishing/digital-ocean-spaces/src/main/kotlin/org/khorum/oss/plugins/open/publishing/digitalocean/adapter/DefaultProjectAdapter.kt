@@ -38,3 +38,4 @@ class DefaultProjectAdapter(
         override val name: String
     ) : ProjectAdapter.MavenPublicationAdapter
 }
+

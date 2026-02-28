@@ -65,14 +65,19 @@ open class MavenGeneratedArtifactsPublishPluginService :
 
         if (extension.withDokka) {
             pluginManager.apply("org.jetbrains.dokka")
+
             dokkaJavadocJar = tasks.register<Jar>("dokkaJavadocJar") {
                 archiveClassifier.set("javadoc")
-                from(tasks.named("dokkaJavadoc"))
+                val dokkaTask = tasks.named("dokkaGeneratePublicationJavadoc")
+                dependsOn(dokkaTask)
+                from(dokkaTask.map { it.outputs.files })
             }
 
             dokkaHtmlJar = tasks.register<Jar>("dokkaHtmlJar") {
                 archiveClassifier.set("kdoc")
-                from(tasks.named("dokkaHtml"))
+                val dokkaTask = tasks.named("dokkaGeneratePublicationHtml")
+                dependsOn(dokkaTask)
+                from(dokkaTask.map { it.outputs.files })
             }
         }
 
