@@ -10,7 +10,8 @@ class NamespaceTest : UnitTest() {
         Namespace(
             groupId = "org.khorum.oss.plugins.open.publishing",
             artifactId = "digital-ocean-spaces",
-            version = "1.0.0"
+            version = "1.0.0",
+            publicationName = "digitalOceanSpaces"
         )
     ) {
 

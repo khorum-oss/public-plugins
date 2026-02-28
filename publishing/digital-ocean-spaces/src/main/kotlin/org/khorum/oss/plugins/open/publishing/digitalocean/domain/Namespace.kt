@@ -9,7 +9,8 @@ package org.khorum.oss.plugins.open.publishing.digitalocean.domain
 data class Namespace(
     val groupId: String,
     val artifactId: String,
-    val version: String
+    val version: String,
+    val publicationName: String = "digitalOceanSpaces"
 ) {
     val artifactVersion: String = "$artifactId-$version"
     val groupPath: String = groupId.replace('.', '/')
@@ -57,7 +58,7 @@ data class Namespace(
     val kdocJarSha1Key: String = "$artifactFullPath/$kdocJarSha1Name"
     val kdocJarSha256Key: String = "$artifactFullPath/$kdocJarSha256Name"
 
-    val sourcePomName: String = "publications/digitalOceanSpaces/pom-default.xml"
+    val sourcePomName: String = "publications/$publicationName/pom-default.xml"
     val pomName: String = "$artifactVersion.pom"
     val pomSha1Name: String = "$pomName.sha1"
     val pomSha256Name: String = "$pomName.sha256"

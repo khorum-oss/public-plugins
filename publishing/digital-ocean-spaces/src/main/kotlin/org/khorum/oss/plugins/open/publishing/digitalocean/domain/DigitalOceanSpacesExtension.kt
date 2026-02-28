@@ -44,4 +44,6 @@ open class DigitalOceanSpacesExtension {
     var continueOnVersionCheckFailure: Boolean = true
 
     var isPlugin: Boolean = false
+
+    var publicationName: String = "digitalOceanSpaces"
 }
