@@ -45,5 +45,7 @@ open class DigitalOceanSpacesExtension {
 
     var isPlugin: Boolean = false
 
+    var pluginId: String? = null
+
     var publicationName: String = "digitalOceanSpaces"
 }

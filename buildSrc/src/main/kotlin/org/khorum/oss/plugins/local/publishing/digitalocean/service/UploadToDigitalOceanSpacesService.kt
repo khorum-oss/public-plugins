@@ -16,7 +16,8 @@ class UploadToDigitalOceanSpacesService(
     private val checkS3Client: S3Client,
     private val isPlugin: Boolean = false,
     private val checkVersionService: CheckVersionDigitalOceanSpacesService,
-    private val publicationName: String = "digitalOceanSpaces"
+    private val publicationName: String = "digitalOceanSpaces",
+    private val pluginId: String? = null
 ) {
     private val buildDir: File
         get() = project.buildDir
@@ -25,11 +26,13 @@ class UploadToDigitalOceanSpacesService(
     fun uploadToSpaces() {
         checkVersionService.checkVersion(project, digitalOceanSpacesClient.ext, checkS3Client)
 
+        val defaultPluginId = "${project.group}.${project.name}"
         val namespace = Namespace(
             groupId = project.group,
             artifactId = project.name,
             version = project.version,
-            publicationName = publicationName
+            publicationName = publicationName,
+            pluginId = pluginId ?: defaultPluginId
         )
 
         val pomFiles = copyPomFiles(namespace)

@@ -10,13 +10,13 @@ data class Namespace(
     val groupId: String,
     val artifactId: String,
     val version: String,
-    val publicationName: String = "digitalOceanSpaces"
+    val publicationName: String = "digitalOceanSpaces",
+    val pluginId: String = "$groupId.$artifactId"
 ) {
     val artifactVersion: String = "$artifactId-$version"
     val groupPath: String = groupId.replace('.', '/')
     val artifactPath: String = "$groupPath/$artifactId"
     val artifactFullPath: String = "$groupPath/$artifactId/$version"
-    val pluginFullPath: String = "$artifactPath/$groupId.$artifactId.gradle.plugin/$version"
 
     val jarName: String = "$artifactVersion.jar"
     val jarSha1Name: String = "$jarName.sha1"
@@ -69,8 +69,10 @@ data class Namespace(
     val pomSha1Key: String = "$artifactFullPath/$pomSha1Name"
     val pomSha256Key: String = "$artifactFullPath/$pomSha256Name"
 
-    val pluginMarkerGroup: String = "$groupId.$artifactId"
-    val pluginMarkerArtifact: String = "$pluginMarkerGroup.gradle.plugin"
+    val pluginMarkerGroup: String = pluginId
+    val pluginMarkerArtifact: String = "$pluginId.gradle.plugin"
+    val pluginMarkerGroupPath: String = pluginId.replace('.', '/')
+    val pluginFullPath: String = "$pluginMarkerGroupPath/$pluginMarkerArtifact/$version"
 
     val pluginJarName: String = "$pluginMarkerArtifact-$version.jar"
     val pluginJarSha1Name: String = "$pluginJarName.sha1"
