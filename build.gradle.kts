@@ -12,11 +12,11 @@ repositories {
     mavenCentral()
 }
 
-extra["claudeCodeSkillResolver"] = "1.0.1"
-extra["publishingDigitalOceanSpacesVersion"] = "1.0.1"
-extra["publishingMavenGeneratedArtifactsVersion"] = "1.0.3"
-extra["pipelineVersion"] = "1.0.1"
-extra["secretsVersion"] = "1.0.1"
+extra["claudeCodeSkillResolver"] = "1.0.1-SNAPSHOT"
+extra["publishingDigitalOceanSpacesVersion"] = "1.0.3-SNAPSHOT"
+extra["publishingMavenGeneratedArtifactsVersion"] = "1.0.3-SNAPSHOT"
+extra["pipelineVersion"] = "1.0.1-SNAPSHOT"
+extra["secretsVersion"] = "1.0.1-SNAPSHOT"
 
 allprojects {
     apply {
