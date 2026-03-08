@@ -27,6 +27,9 @@ data class Namespace(
     val jarKey: String = "$artifactFullPath/$jarName"
     val jarSha1Key: String = "$artifactFullPath/$jarSha1Name"
     val jarSha256Key: String = "$artifactFullPath/$jarSha256Name"
+    val jarAscName: String = "$jarName.asc"
+    val jarAscPath: String = "libs/$jarAscName"
+    val jarAscKey: String = "$artifactFullPath/$jarAscName"
 
     val sourcesJarName: String = "$artifactVersion-sources.jar"
     val sourcesJarSha1Name: String = "$sourcesJarName.sha1"
@@ -37,6 +40,9 @@ data class Namespace(
     val sourcesJarKey: String = "$artifactFullPath/$sourcesJarName"
     val sourcesJarSha1Key: String = "$artifactFullPath/$sourcesJarSha1Name"
     val sourcesJarSha256Key: String = "$artifactFullPath/$sourcesJarSha256Name"
+    val sourcesJarAscName: String = "$sourcesJarName.asc"
+    val sourcesJarAscPath: String = "libs/$sourcesJarAscName"
+    val sourcesJarAscKey: String = "$artifactFullPath/$sourcesJarAscName"
 
     val javadocJarName: String = "$artifactVersion-javadoc.jar"
     val javadocJarSha1Name: String = "$javadocJarName.sha1"
@@ -47,6 +53,9 @@ data class Namespace(
     val javadocJarKey: String = "$artifactFullPath/$javadocJarName"
     val javadocJarSha1Key: String = "$artifactFullPath/$javadocJarSha1Name"
     val javadocJarSha256Key: String = "$artifactFullPath/$javadocJarSha256Name"
+    val javadocJarAscName: String = "$javadocJarName.asc"
+    val javadocJarAscPath: String = "libs/$javadocJarAscName"
+    val javadocJarAscKey: String = "$artifactFullPath/$javadocJarAscName"
 
     val kdocJarName: String = "$artifactVersion-kdoc.jar"
     val kdocJarSha1Name: String = "$kdocJarName.sha1"
@@ -57,6 +66,9 @@ data class Namespace(
     val kdocJarKey: String = "$artifactFullPath/$kdocJarName"
     val kdocJarSha1Key: String = "$artifactFullPath/$kdocJarSha1Name"
     val kdocJarSha256Key: String = "$artifactFullPath/$kdocJarSha256Name"
+    val kdocJarAscName: String = "$kdocJarName.asc"
+    val kdocJarAscPath: String = "libs/$kdocJarAscName"
+    val kdocJarAscKey: String = "$artifactFullPath/$kdocJarAscName"
 
     val sourcePomName: String = "publications/$publicationName/pom-default.xml"
     val pomName: String = "$artifactVersion.pom"
@@ -68,6 +80,9 @@ data class Namespace(
     val pomKey: String = "$artifactFullPath/$pomName"
     val pomSha1Key: String = "$artifactFullPath/$pomSha1Name"
     val pomSha256Key: String = "$artifactFullPath/$pomSha256Name"
+    val pomAscName: String = "$pomName.asc"
+    val pomAscPath: String = "libs/$pomAscName"
+    val pomAscKey: String = "$artifactFullPath/$pomAscName"
 
     val pluginMarkerGroup: String = "$groupId.$artifactId"
     val pluginMarkerArtifact: String = "$pluginMarkerGroup.gradle.plugin"
@@ -81,6 +96,9 @@ data class Namespace(
     val pluginJarKey: String = "$pluginFullPath/$pluginJarName"
     val pluginJarSha1Key: String = "$pluginFullPath/$pluginJarSha1Name"
     val pluginJarSha256Key: String = "$pluginFullPath/$pluginJarSha256Name"
+    val pluginJarAscName: String = "$pluginJarName.asc"
+    val pluginJarAscPath: String = "libs/$pluginJarAscName"
+    val pluginJarAscKey: String = "$pluginFullPath/$pluginJarAscName"
 
     val pluginPomName: String = "$pluginMarkerArtifact-$version.pom"
     val pluginPomSha1Name: String = "$pluginPomName.sha1"
@@ -91,4 +109,7 @@ data class Namespace(
     val pluginPomKey: String = "$pluginFullPath/$pluginPomName"
     val pluginPomSha1Key: String = "$pluginFullPath/$pluginPomSha1Name"
     val pluginPomSha256Key: String = "$pluginFullPath/$pluginPomSha256Name"
+    val pluginPomAscName: String = "$pluginPomName.asc"
+    val pluginPomAscPath: String = "libs/$pluginPomAscName"
+    val pluginPomAscKey: String = "$pluginFullPath/$pluginPomAscName"
 }
