@@ -7,6 +7,7 @@ import javax.inject.Inject
 open class ManualMavenArtifactsExtension @Inject constructor(private val objectFactory: ObjectFactory) {
     var publicationName: String = "maven"
     var withDokka: Boolean = true
+    var signingRequired: Boolean = true
     var name: String? = null
     var description: String? = null
     var websiteUrl: String? = null

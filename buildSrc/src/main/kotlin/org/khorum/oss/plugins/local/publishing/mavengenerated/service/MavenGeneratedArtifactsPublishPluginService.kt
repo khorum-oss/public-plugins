@@ -13,6 +13,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.get
 import org.khorum.oss.plugins.local.publishing.mavengenerated.domain.ManualMavenArtifactsExtension
 import java.io.File
+import org.gradle.plugins.signing.SigningExtension
 import java.security.MessageDigest
 
 open class MavenGeneratedArtifactsPublishPluginService :
@@ -34,14 +35,15 @@ open class MavenGeneratedArtifactsPublishPluginService :
 
             val jarTasks: MutableList<TaskProvider<Jar>> = nonNullMutableList(sourcesJar, dokkaJavadocJar, dokkaHtmlJar)
 
-            configurePom(extension, artifactProviders = jarTasks)
+            val hasSigning = configurePom(extension, artifactProviders = jarTasks)
 
             val generateHashTask = addGenerateHashesTask()
 
             addAssembleMavenArtifactsTask(
                 extension.publicationName,
                 dependsOn = jarTasks,
-                finalizedBy = generateHashTask
+                finalizedBy = generateHashTask,
+                hasSigning = hasSigning
             )
         }
 
@@ -87,7 +89,7 @@ open class MavenGeneratedArtifactsPublishPluginService :
     private fun Project.configurePom(
         extension: ManualMavenArtifactsExtension,
         artifactProviders: List<TaskProvider<Jar>>
-    ) {
+    ): Boolean {
         extensions.configure<PublishingExtension> {
             publications {
                 create<MavenPublication>(extension.publicationName) {
@@ -136,6 +138,49 @@ open class MavenGeneratedArtifactsPublishPluginService :
                 }
             }
         }
+
+        val signingKeyFile = project.rootProject.file("khorum-signing.asc")
+        val signingPassword = (project.findProperty("signing.password") as? String)
+            ?: System.getenv("GPG_SIGNING_PASSWORD")
+
+        val signingKey = when {
+            signingKeyFile.exists() -> {
+                logger.lifecycle(" | [SIGNING] Found signing key file: ${signingKeyFile.absolutePath}")
+                signingKeyFile.readText()
+            }
+            System.getenv("GPG_SIGNING_KEY") != null -> {
+                logger.lifecycle(" | [SIGNING] Using signing key from GPG_SIGNING_KEY environment variable")
+                System.getenv("GPG_SIGNING_KEY")
+            }
+            else -> {
+                logger.lifecycle(" | [SIGNING] No signing key found (checked: ${signingKeyFile.absolutePath}, GPG_SIGNING_KEY env)")
+                null
+            }
+        }
+
+        if (signingKey != null && signingPassword != null) {
+            logger.lifecycle(" | [SIGNING] Signing publication '${extension.publicationName}'")
+            project.pluginManager.apply("signing")
+            project.extensions.configure<SigningExtension> {
+                useInMemoryPgpKeys(signingKey, signingPassword)
+                sign(project.extensions.getByType<PublishingExtension>()
+                    .publications[extension.publicationName])
+            }
+            return true
+        } else if (extension.signingRequired) {
+            val missing = listOfNotNull(
+                if (signingKey == null) "signing key" else null,
+                if (signingPassword == null) "signing password" else null,
+            )
+            throw org.gradle.api.GradleException(
+                "Signing is required but missing: ${missing.joinToString(", ")}. " +
+                "Set signingRequired = false in mavenGeneratedArtifacts { } to skip signing."
+            )
+        } else {
+            logger.lifecycle(" | [SIGNING] Skipping signing (signingRequired = false)")
+        }
+
+        return false
     }
 
     private val MALFORMED_TAG_NAMES = mapOf(
@@ -150,6 +195,7 @@ open class MavenGeneratedArtifactsPublishPluginService :
         for (child in children) {
             if (child is groovy.util.Node) {
                 val nodeName = child.name().toString().let { raw ->
+                    // Handle qualified names like {namespace}localPart
                     raw.substringAfterLast("}")
                         .substringAfterLast(":")
                         .ifEmpty { raw }
@@ -202,7 +248,8 @@ open class MavenGeneratedArtifactsPublishPluginService :
     fun Project.addAssembleMavenArtifactsTask(
         publicationName: String = "maven",
         dependsOn: MutableList<TaskProvider<Jar>>,
-        finalizedBy: TaskProvider<Task>
+        finalizedBy: TaskProvider<Task>,
+        hasSigning: Boolean = false
     ) {
         val capitalizedPublicationName = publicationName.replaceFirstChar { it.uppercase() }
 
@@ -211,6 +258,9 @@ open class MavenGeneratedArtifactsPublishPluginService :
             description = "Builds main, sources, javadoc, kdoc jars and the POM."
             dependsOn("jar", "generatePomFileFor${capitalizedPublicationName}Publication")
             dependsOn(*dependsOn.toTypedArray())
+            if (hasSigning) {
+                dependsOn("sign${capitalizedPublicationName}Publication")
+            }
             finalizedBy(finalizedBy)
         }
     }
