@@ -5,6 +5,7 @@ import org.khorum.oss.plugins.local.publishing.digitalocean.client.DryRunDigital
 import org.khorum.oss.plugins.local.publishing.digitalocean.domain.DigitalOceanSpacesExtension
 import org.khorum.oss.plugins.local.publishing.digitalocean.task.DigitalOceanSpacesCheckVersionTask
 import org.khorum.oss.plugins.local.publishing.digitalocean.task.DigitalOceanSpacesUploadTask
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
@@ -67,6 +68,19 @@ class DigitalOceanSpacesPublishPluginService {
                 // If using the maven-publish plugin, also depend on publish tasks
                 plugins.withId("maven-publish") {
                     dependsOn("generatePomFileFor${capitalizedPublicationName}Publication")
+                }
+
+                if (extension.signingRequired) {
+                    doFirst {
+                        val libsDir = project.layout.buildDirectory.dir("libs").get().asFile
+                        val hasAscFiles = libsDir.exists() && libsDir.listFiles()?.any { it.name.endsWith(".asc") } == true
+                        if (!hasAscFiles) {
+                            throw GradleException(
+                                "Signing is required for publishing but no .asc signature files were found in ${libsDir.absolutePath}. " +
+                                "Ensure signing keys are configured, or set signingRequired = false in digitalOceanSpacesPublishing { }."
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -169,24 +169,6 @@ open class MavenGeneratedArtifactsPublishPluginService :
             return true
         } else {
             logger.lifecycle(" | [SIGNING] Signing keys not available, sign tasks will not be created")
-
-            if (extension.signingRequired) {
-                val missing = listOfNotNull(
-                    if (signingKey == null) "signing key" else null,
-                    if (signingPassword == null) "signing password" else null,
-                )
-                project.gradle.taskGraph.whenReady {
-                    val hasPublishTask = allTasks.any {
-                        it.name.startsWith("publish") || it.name.startsWith("uploadTo")
-                    }
-                    if (hasPublishTask) {
-                        throw org.gradle.api.GradleException(
-                            "Signing is required for publishing but missing: ${missing.joinToString(", ")}. " +
-                            "Set signingRequired = false in mavenGeneratedArtifacts { } to skip signing."
-                        )
-                    }
-                }
-            }
         }
 
         return false

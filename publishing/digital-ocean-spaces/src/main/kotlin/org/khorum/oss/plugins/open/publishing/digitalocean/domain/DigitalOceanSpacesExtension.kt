@@ -48,4 +48,6 @@ open class DigitalOceanSpacesExtension {
     var pluginId: String? = null
 
     var publicationName: String = "digitalOceanSpaces"
+
+    var signingRequired: Boolean = true
 }

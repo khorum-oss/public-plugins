@@ -110,9 +110,8 @@ class UploadToDigitalOceanSpacesService(
 
     private fun copyPomFiles(namespace: Namespace): Sequence<DigitalOceanFile> {
         val pomFile = File(buildDir, namespace.sourcePomName)
-        if (!pomFile.exists()) {
-            throw IllegalStateException("POM file does not exist: ${pomFile.absolutePath}")
-        }
+
+        check(pomFile.exists()) { "POM file does not exist: ${pomFile.absolutePath}" }
 
         val newPom = File(buildDir, namespace.pomPath)
 
@@ -123,8 +122,6 @@ class UploadToDigitalOceanSpacesService(
             namespace.pomKey,
             newPom
         )
-
-//        project.project.addGenerateHashesTask()
 
         val sha1 = DigitalOceanFile(
             namespace.pomSha1Key,

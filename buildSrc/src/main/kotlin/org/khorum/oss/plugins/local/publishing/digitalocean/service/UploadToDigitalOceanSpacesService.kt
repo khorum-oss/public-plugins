@@ -10,6 +10,9 @@ import software.amazon.awssdk.services.s3.S3Client
 import java.io.File
 import java.security.MessageDigest
 
+private const val SHA_1 = "SHA-1"
+private const val SHA_256 = "SHA-256"
+
 class UploadToDigitalOceanSpacesService(
     private val project: ProjectAdapter,
     private val digitalOceanSpacesClient: DigitalOceanSpacesClient,
@@ -64,7 +67,7 @@ class UploadToDigitalOceanSpacesService(
                 namespace.pluginJarSha1Key,
                 File(buildDir, namespace.pluginJarSha1Path).apply {
                     parentFile.mkdirs()
-                    writeText(pluginJar.generateHash("SHA-1"))
+                    writeText(pluginJar.generateHash(SHA_1))
                 }
             )
 
@@ -72,7 +75,7 @@ class UploadToDigitalOceanSpacesService(
                 namespace.pluginJarSha256Key,
                 File(buildDir, namespace.pluginJarSha256Path).apply {
                     parentFile.mkdirs()
-                    writeText(pluginJar.generateHash("SHA-256"))
+                    writeText(pluginJar.generateHash(SHA_256))
                 }
             )
 
@@ -130,7 +133,7 @@ class UploadToDigitalOceanSpacesService(
             namespace.pomSha1Key,
             File(buildDir, namespace.pomSha1Path).apply {
                 parentFile.mkdirs()
-                writeText(newPom.generateHash("SHA-1"))
+                writeText(newPom.generateHash(SHA_1))
             }
         )
 
@@ -138,7 +141,7 @@ class UploadToDigitalOceanSpacesService(
             namespace.pomSha256Key,
             File(buildDir, namespace.pomSha256Path).apply {
                 parentFile.mkdirs()
-                writeText(newPom.generateHash("SHA-256"))
+                writeText(newPom.generateHash(SHA_256))
             })
 
         val pluginFiles = pluginPom(namespace)

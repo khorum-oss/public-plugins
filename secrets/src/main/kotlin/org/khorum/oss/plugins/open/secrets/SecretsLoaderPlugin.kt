@@ -7,6 +7,8 @@ import org.gradle.kotlin.dsl.create
 import java.io.File
 import java.util.*
 
+private const val DEFAULT_SECRET_FILE = "secret.properties"
+
 /**
  * A plugin that loads secrets from a file or system properties into the project's extra properties.
  */
@@ -25,7 +27,7 @@ open class SecretsLoaderPlugin : DefaultOutputPlugin() {
             logger.lifecycle(" | [INFO] systemProperties: ${extension.systemProperties()}")
 
             val amountProcessed: Int = rootProject.processSecrets(
-                extension.secretFile ?: "secret.properties",
+                extension.secretFile ?: DEFAULT_SECRET_FILE,
                 extension.systemProperties()
             )
 
@@ -35,7 +37,7 @@ open class SecretsLoaderPlugin : DefaultOutputPlugin() {
             tasks.register("checkSecretsExist", CheckSecretsExistTask::class.java) {
                 this.group = "verification"
                 this.description = "Check if secrets exist in the secret file"
-                this.secretFilePath = project.rootProject.file(extension.secretFile ?: "secret.properties")
+                this.secretFilePath = project.rootProject.file(extension.secretFile ?: DEFAULT_SECRET_FILE)
                 this.amountFound = amountProcessed
 
                 defaultOutputFileDetails(project, this, CheckSecretsExistTask::class)
@@ -53,7 +55,7 @@ open class SecretsLoaderPlugin : DefaultOutputPlugin() {
      * @return The number of properties loaded into the extra properties.
      */
     fun Project.processSecrets(
-        secretPropertiesName: String = "secret.properties",
+        secretPropertiesName: String = DEFAULT_SECRET_FILE,
         systemProperties: Map<Ext.Key, Ext.SysPropName> = emptyMap()
     ): Int {
         val secretPropsFile = this.rootProject.file(secretPropertiesName)

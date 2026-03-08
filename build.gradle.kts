@@ -13,8 +13,8 @@ repositories {
 }
 
 extra["claudeCodeSkillResolver"] = "1.0.1-SNAPSHOT"
-extra["publishingDigitalOceanSpacesVersion"] = "1.0.3-SNAPSHOT"
-extra["publishingMavenGeneratedArtifactsVersion"] = "1.0.2"
+extra["publishingDigitalOceanSpacesVersion"] = "1.0.3"
+extra["publishingMavenGeneratedArtifactsVersion"] = "1.0.3"
 extra["pipelineVersion"] = "1.0.1-SNAPSHOT"
 extra["secretsVersion"] = "1.0.1-SNAPSHOT"
 
