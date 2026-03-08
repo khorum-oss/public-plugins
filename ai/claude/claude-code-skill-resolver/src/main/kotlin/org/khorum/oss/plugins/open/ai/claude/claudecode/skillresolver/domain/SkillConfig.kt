@@ -19,7 +19,6 @@ data class SkillConfig(
      * Format: https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{skillsPath}
      */
     fun buildBaseUrl(): String {
-        //todo: allow full override
         return "https://raw.githubusercontent.com/$owner/$repo/$branch/$skillsPath"
     }
 

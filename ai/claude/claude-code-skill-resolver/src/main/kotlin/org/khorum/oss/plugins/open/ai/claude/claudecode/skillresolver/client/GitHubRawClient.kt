@@ -89,7 +89,6 @@ class GitHubRawClient(
         val rawUrl = config.buildSkillFileUrl(skillName, fileInfo.name)
         logger.info("  | Fetching file: ${fileInfo.name} from $rawUrl")
 
-        //todo: swap with builder
         val request: HttpRequest = buildGetRequest {
             uri(rawUrl)
             withDefaultTimeout()
@@ -122,7 +121,6 @@ class GitHubRawClient(
      * Format: https://api.github.com/repos/{owner}/{repo}/contents/{path}?ref={branch}
      */
     private fun buildGitHubApiUrl(skillName: String): String {
-        //todo: add skillName format verification
         val path = "${config.skillsPath}/$skillName"
         return "https://api.github.com/repos/${config.owner}/${config.repo}/contents/$path?ref=${config.branch}"
     }
