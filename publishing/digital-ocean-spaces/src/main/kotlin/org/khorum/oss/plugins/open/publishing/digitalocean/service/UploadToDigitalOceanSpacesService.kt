@@ -16,7 +16,8 @@ class UploadToDigitalOceanSpacesService(
     private val checkS3Client: S3Client,
     private val isPlugin: Boolean = false,
     private val checkVersionService: CheckVersionDigitalOceanSpacesService,
-    private val publicationName: String = "digitalOceanSpaces"
+    private val publicationName: String = "digitalOceanSpaces",
+    private val pluginId: String? = null
 ) {
     private val buildDir: File
         get() = project.buildDir
@@ -30,11 +31,13 @@ class UploadToDigitalOceanSpacesService(
     fun uploadToSpaces() {
         checkVersionService.checkVersion(project, digitalOceanSpacesClient.ext, checkS3Client)
 
+        val defaultPluginId = "${project.group}.${project.name}"
         val namespace = Namespace(
             groupId = project.group,
             artifactId = project.name,
             version = project.version,
-            publicationName = publicationName
+            publicationName = publicationName,
+            pluginId = pluginId ?: defaultPluginId
         )
 
         val pomFiles = copyPomFiles(namespace)
@@ -107,9 +110,8 @@ class UploadToDigitalOceanSpacesService(
 
     private fun copyPomFiles(namespace: Namespace): Sequence<DigitalOceanFile> {
         val pomFile = File(buildDir, namespace.sourcePomName)
-        if (!pomFile.exists()) {
-            throw IllegalStateException("POM file does not exist: ${pomFile.absolutePath}")
-        }
+
+        check(pomFile.exists()) { "POM file does not exist: ${pomFile.absolutePath}" }
 
         val newPom = File(buildDir, namespace.pomPath)
 
@@ -120,8 +122,6 @@ class UploadToDigitalOceanSpacesService(
             namespace.pomKey,
             newPom
         )
-
-//        project.project.addGenerateHashesTask()
 
         val sha1 = DigitalOceanFile(
             namespace.pomSha1Key,

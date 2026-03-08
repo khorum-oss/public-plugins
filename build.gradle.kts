@@ -3,7 +3,6 @@
 plugins {
     kotlin("jvm") version "2.0.20"
     id("org.khorum.oss.plugins.local.secrets.loader")
-    id("org.jetbrains.dokka") version "1.9.20" apply false
 }
 
 group = "org.khorum.oss.public-plugins"
@@ -13,15 +12,14 @@ repositories {
     mavenCentral()
 }
 
-extra["claudeCodeSkillResolver"] = "1.0.1"
-extra["publishingDigitalOceanSpacesVersion"] = "1.0.1"
+extra["claudeCodeSkillResolver"] = "1.0.1-SNAPSHOT"
+extra["publishingDigitalOceanSpacesVersion"] = "1.0.3"
 extra["publishingMavenGeneratedArtifactsVersion"] = "1.0.3"
-extra["pipelineVersion"] = "1.0.1"
-extra["secretsVersion"] = "1.0.1"
+extra["pipelineVersion"] = "1.0.1-SNAPSHOT"
+extra["secretsVersion"] = "1.0.1-SNAPSHOT"
 
 allprojects {
     apply {
-        plugin("org.jetbrains.dokka")
         plugin("kotlin")
     }
 

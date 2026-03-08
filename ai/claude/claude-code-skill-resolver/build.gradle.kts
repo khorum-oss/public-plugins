@@ -7,7 +7,7 @@ val claudeCodeSkillResolver: String by rootProject.extra
 
 plugins {
     `kotlin-dsl`
-    id("org.jetbrains.dokka")
+    id("org.jetbrains.dokka") version "1.9.20"
     id("org.khorum.oss.plugins.local.publishing.maven-generated-artifacts")
     id("org.khorum.oss.plugins.local.publishing.digital-ocean-spaces")
 }

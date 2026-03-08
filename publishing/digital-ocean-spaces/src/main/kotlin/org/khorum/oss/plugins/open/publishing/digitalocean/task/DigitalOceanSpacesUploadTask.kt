@@ -57,7 +57,8 @@ abstract class DigitalOceanSpacesUploadTask : DefaultTask() {
             checkS3Client,
             isPlugin = digitalOceanSpacesClient.ext.isPlugin,
             checkVersion,
-            publicationName = publicationName
+            publicationName = publicationName,
+            pluginId = digitalOceanSpacesClient.ext.pluginId
         )
 
         service.uploadToSpaces()
