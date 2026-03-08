@@ -21,6 +21,11 @@ class UploadToDigitalOceanSpacesService(
     private val buildDir: File
         get() = project.buildDir
 
+    private fun ascIfExists(key: String, path: String): Sequence<DigitalOceanFile> {
+        val file = File(buildDir, path)
+        return if (file.exists()) sequenceOf(DigitalOceanFile(key, file)) else emptySequence()
+    }
+
     @Throws(GradleException::class)
     fun uploadToSpaces() {
         checkVersionService.checkVersion(project, digitalOceanSpacesClient.ext, checkS3Client)
@@ -68,7 +73,8 @@ class UploadToDigitalOceanSpacesService(
                 }
             )
 
-            filesToUpload = filesToUpload.plus(sequenceOf(pluginJarDoFile, sha1, sha256))
+            filesToUpload = filesToUpload.plus(sequenceOf(pluginJarDoFile, sha1, sha256)) +
+                ascIfExists(namespace.pluginJarAscKey, namespace.pluginJarAscPath)
         }
 
         filesToUpload
@@ -79,25 +85,25 @@ class UploadToDigitalOceanSpacesService(
         DigitalOceanFile(namespace.jarKey, File(buildDir, namespace.jarPath)),
         DigitalOceanFile(namespace.jarSha1Key, File(buildDir, namespace.jarSha1Path)),
         DigitalOceanFile(namespace.jarSha256Key, File(buildDir, namespace.jarSha256Path))
-    )
+    ) + ascIfExists(namespace.jarAscKey, namespace.jarAscPath)
 
     private fun createSourcesJar(namespace: Namespace): Sequence<DigitalOceanFile> = sequenceOf(
         DigitalOceanFile(namespace.sourcesJarKey, File(buildDir, namespace.sourcesJarPath)),
         DigitalOceanFile(namespace.sourcesJarSha1Key, File(buildDir, namespace.sourcesJarSha1Path)),
         DigitalOceanFile(namespace.sourcesJarSha256Key, File(buildDir, namespace.sourcesJarSha256Path))
-    )
+    ) + ascIfExists(namespace.sourcesJarAscKey, namespace.sourcesJarAscPath)
 
     private fun createKdocJar(namespace: Namespace): Sequence<DigitalOceanFile> = sequenceOf(
         DigitalOceanFile(namespace.kdocJarKey, File(buildDir, namespace.kdocJarPath)),
         DigitalOceanFile(namespace.kdocJarSha1Key, File(buildDir, namespace.kdocJarSha1Path)),
         DigitalOceanFile(namespace.kdocJarSha256Key, File(buildDir, namespace.kdocJarSha256Path))
-    )
+    ) + ascIfExists(namespace.kdocJarAscKey, namespace.kdocJarAscPath)
 
     private fun createJavadocJar(namespace: Namespace): Sequence<DigitalOceanFile> = sequenceOf(
         DigitalOceanFile(namespace.javadocJarKey, File(buildDir, namespace.javadocJarPath)),
         DigitalOceanFile(namespace.javadocJarSha1Key, File(buildDir, namespace.javadocJarSha1Path)),
         DigitalOceanFile(namespace.javadocJarSha256Key, File(buildDir, namespace.javadocJarSha256Path))
-    )
+    ) + ascIfExists(namespace.javadocJarAscKey, namespace.javadocJarAscPath)
 
     private fun copyPomFiles(namespace: Namespace): Sequence<DigitalOceanFile> {
         val pomFile = File(buildDir, namespace.sourcePomName)
@@ -133,7 +139,9 @@ class UploadToDigitalOceanSpacesService(
             })
 
         val pluginFiles = pluginPom(namespace)
-        return sequenceOf(finalPom, sha1, sha256) + pluginFiles
+        return sequenceOf(finalPom, sha1, sha256) +
+            ascIfExists(namespace.pomAscKey, namespace.pomAscPath) +
+            pluginFiles
     }
 
     private fun pluginPom(namespace: Namespace): Sequence<DigitalOceanFile> {
@@ -185,7 +193,8 @@ class UploadToDigitalOceanSpacesService(
             }
         )
 
-        return sequenceOf(finalPom, sha1, sha256)
+        return sequenceOf(finalPom, sha1, sha256) +
+            ascIfExists(namespace.pluginPomAscKey, namespace.pluginPomAscPath)
     }
 
 

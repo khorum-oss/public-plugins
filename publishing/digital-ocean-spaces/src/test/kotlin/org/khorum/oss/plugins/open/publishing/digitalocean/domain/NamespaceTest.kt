@@ -37,7 +37,10 @@ class NamespaceTest : UnitTest() {
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0.jar.sha1"
             jarSha256Key eq
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0.jar.sha256"
-
+            jarAscName eq "digital-ocean-spaces-1.0.0.jar.asc"
+            jarAscPath eq "libs/digital-ocean-spaces-1.0.0.jar.asc"
+            jarAscKey eq
+                "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0.jar.asc"
         }
 
         sourcesTests {
@@ -53,6 +56,10 @@ class NamespaceTest : UnitTest() {
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-sources.jar.sha1"
             sourcesJarSha256Key eq
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-sources.jar.sha256"
+            sourcesJarAscName eq "digital-ocean-spaces-1.0.0-sources.jar.asc"
+            sourcesJarAscPath eq "libs/digital-ocean-spaces-1.0.0-sources.jar.asc"
+            sourcesJarAscKey eq
+                "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-sources.jar.asc"
         }
 
         javadocTests {
@@ -68,6 +75,10 @@ class NamespaceTest : UnitTest() {
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-javadoc.jar.sha1"
             javadocJarSha256Key eq
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-javadoc.jar.sha256"
+            javadocJarAscName eq "digital-ocean-spaces-1.0.0-javadoc.jar.asc"
+            javadocJarAscPath eq "libs/digital-ocean-spaces-1.0.0-javadoc.jar.asc"
+            javadocJarAscKey eq
+                "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-javadoc.jar.asc"
         }
 
         kdocTests {
@@ -83,6 +94,10 @@ class NamespaceTest : UnitTest() {
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-kdoc.jar.sha1"
             kdocJarSha256Key eq
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-kdoc.jar.sha256"
+            kdocJarAscName eq "digital-ocean-spaces-1.0.0-kdoc.jar.asc"
+            kdocJarAscPath eq "libs/digital-ocean-spaces-1.0.0-kdoc.jar.asc"
+            kdocJarAscKey eq
+                "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0-kdoc.jar.asc"
         }
 
         pomTests {
@@ -98,6 +113,10 @@ class NamespaceTest : UnitTest() {
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0.pom.sha1"
             pomSha256Key eq
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0.pom.sha256"
+            pomAscName eq "digital-ocean-spaces-1.0.0.pom.asc"
+            pomAscPath eq "libs/digital-ocean-spaces-1.0.0.pom.asc"
+            pomAscKey eq
+                "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/1.0.0/digital-ocean-spaces-1.0.0.pom.asc"
         }
 
         pluginPomTests {
@@ -119,6 +138,12 @@ class NamespaceTest : UnitTest() {
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/" +
                 "org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin/" +
                 "1.0.0/org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.jar.sha256"
+            pluginJarAscName eq "org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.jar.asc"
+            pluginJarAscPath eq "libs/org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.jar.asc"
+            pluginJarAscKey eq
+                "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/" +
+                "org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin/" +
+                "1.0.0/org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.jar.asc"
         }
 
 
@@ -141,6 +166,12 @@ class NamespaceTest : UnitTest() {
                 "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/" +
                 "org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin/" +
                 "1.0.0/org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.pom.sha256"
+            pluginPomAscName eq "org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.pom.asc"
+            pluginPomAscPath eq "libs/org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.pom.asc"
+            pluginPomAscKey eq
+                "org/khorum/oss/plugins/open/publishing/digital-ocean-spaces/" +
+                "org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin/" +
+                "1.0.0/org.khorum.oss.plugins.open.publishing.digital-ocean-spaces.gradle.plugin-1.0.0.pom.asc"
         }
     }
 }

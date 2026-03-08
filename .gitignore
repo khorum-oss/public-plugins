@@ -6,3 +6,5 @@ build
 
 secret.properties
 personal*
+*.asc
+.serena
