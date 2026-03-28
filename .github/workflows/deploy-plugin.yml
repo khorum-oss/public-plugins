@@ -1,0 +1,122 @@
+name: Deploy Plugin
+
+on:
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: 'Plugin to deploy'
+        required: true
+        type: choice
+        options:
+          - claude-code-skill-resolver
+          - pipeline
+          - secrets
+          - digital-ocean-spaces
+          - maven-generated-artifacts
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-plugin
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.plugin }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GIT_TOKEN || github.token }}
+          fetch-depth: 0
+
+      - name: Setup Java and Gradle
+        uses: khorum-oss/public-cicd/.github/actions/setup-java-gradle@main
+        with:
+          java-version: '21'
+          java-distribution: 'temurin'
+
+      - name: Resolve plugin metadata
+        id: metadata
+        run: |
+          case "${{ inputs.plugin }}" in
+            claude-code-skill-resolver)
+              echo "version_key=claudeCodeSkillResolver" >> "$GITHUB_OUTPUT"
+              echo "gradle_cmd=:ai:claude:claude-code-skill-resolver:clean :ai:claude:claude-code-skill-resolver:uploadToDigitalOceanSpaces" >> "$GITHUB_OUTPUT"
+              ;;
+            pipeline)
+              echo "version_key=pipelineVersion" >> "$GITHUB_OUTPUT"
+              echo "gradle_cmd=:pipeline:clean :pipeline:uploadToDigitalOceanSpaces" >> "$GITHUB_OUTPUT"
+              ;;
+            secrets)
+              echo "version_key=secretsVersion" >> "$GITHUB_OUTPUT"
+              echo "gradle_cmd=:secrets:clean :secrets:uploadToDigitalOceanSpaces" >> "$GITHUB_OUTPUT"
+              ;;
+            digital-ocean-spaces)
+              echo "version_key=publishingDigitalOceanSpacesVersion" >> "$GITHUB_OUTPUT"
+              echo "gradle_cmd=publishing:digital-ocean-spaces:clean publishing:digital-ocean-spaces:uploadToDigitalOceanSpaces" >> "$GITHUB_OUTPUT"
+              ;;
+            maven-generated-artifacts)
+              echo "version_key=publishingMavenGeneratedArtifactsVersion" >> "$GITHUB_OUTPUT"
+              echo "gradle_cmd=publishing:maven-generated-artifacts:clean publishing:maven-generated-artifacts:uploadToDigitalOceanSpaces" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Unknown plugin: ${{ inputs.plugin }}"
+              exit 1
+              ;;
+          esac
+
+      - name: Compute versions
+        id: versions
+        env:
+          VERSION_KEY: ${{ steps.metadata.outputs.version_key }}
+        run: |
+          CURRENT=$(grep "extra\[\"${VERSION_KEY}\"\]" build.gradle.kts | sed 's/.*= "\(.*\)"/\1/')
+          echo "current_version=$CURRENT" >> "$GITHUB_OUTPUT"
+
+          RELEASE="${CURRENT%-SNAPSHOT}"
+          echo "release_version=$RELEASE" >> "$GITHUB_OUTPUT"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$RELEASE"
+          NEXT_MINOR=$((MINOR + 1))
+          NEXT_VERSION="${MAJOR}.${NEXT_MINOR}.0-SNAPSHOT"
+          echo "next_version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+
+          echo "Current: $CURRENT"
+          echo "Release: $RELEASE"
+          echo "Next:    $NEXT_VERSION"
+
+      - name: Set release version
+        env:
+          VERSION_KEY: ${{ steps.metadata.outputs.version_key }}
+          RELEASE_VERSION: ${{ steps.versions.outputs.release_version }}
+        run: |
+          sed -i "s|extra\[\"${VERSION_KEY}\"\] = \".*\"|extra[\"${VERSION_KEY}\"] = \"${RELEASE_VERSION}\"|" build.gradle.kts
+          echo "Set $VERSION_KEY to $RELEASE_VERSION"
+          grep "$VERSION_KEY" build.gradle.kts
+
+      - name: Deploy to DigitalOcean Spaces
+        env:
+          DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
+          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
+        run: ./gradlew ${{ steps.metadata.outputs.gradle_cmd }} --no-daemon
+
+      - name: Set next development version
+        env:
+          VERSION_KEY: ${{ steps.metadata.outputs.version_key }}
+          NEXT_VERSION: ${{ steps.versions.outputs.next_version }}
+        run: |
+          sed -i "s|extra\[\"${VERSION_KEY}\"\] = \".*\"|extra[\"${VERSION_KEY}\"] = \"${NEXT_VERSION}\"|" build.gradle.kts
+          echo "Set $VERSION_KEY to $NEXT_VERSION"
+          grep "$VERSION_KEY" build.gradle.kts
+
+      - name: Commit and push version bump
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add build.gradle.kts
+          git commit -m "chore: bump ${{ inputs.plugin }} to ${{ steps.versions.outputs.next_version }} [skip ci]"
+          git push
