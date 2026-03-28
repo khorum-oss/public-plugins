@@ -1,0 +1,16 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    uses: khorum-oss/public-cicd/.github/workflows/gradle-unit-tests.yml@main
+    with:
+      java-version: '21'
+      coverage-enabled: false
+      no-daemon: true
