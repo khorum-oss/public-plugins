@@ -81,8 +81,8 @@ jobs:
           echo "release_version=$RELEASE" >> "$GITHUB_OUTPUT"
 
           IFS='.' read -r MAJOR MINOR PATCH <<< "$RELEASE"
-          NEXT_MINOR=$((MINOR + 1))
-          NEXT_VERSION="${MAJOR}.${NEXT_MINOR}.0-SNAPSHOT"
+          NEXT_PATCH=$((PATCH + 1))
+          NEXT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}-SNAPSHOT"
           echo "next_version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
 
           echo "Current: $CURRENT"
