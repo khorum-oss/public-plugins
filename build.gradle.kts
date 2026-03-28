@@ -14,7 +14,7 @@ repositories {
 
 extra["claudeCodeSkillResolver"] = "1.0.1-SNAPSHOT"
 extra["publishingDigitalOceanSpacesVersion"] = "1.0.3"
-extra["publishingMavenGeneratedArtifactsVersion"] = "1.0.3"
+extra["publishingMavenGeneratedArtifactsVersion"] = "1.1.0-SNAPSHOT"
 extra["pipelineVersion"] = "1.0.1-SNAPSHOT"
 extra["secretsVersion"] = "1.0.1-SNAPSHOT"
 
