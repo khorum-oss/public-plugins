@@ -40,6 +40,8 @@ class UploadToDigitalOceanSpacesService(
             pluginId = pluginId ?: defaultPluginId
         )
 
+        validateJarExists(namespace)
+
         val pomFiles = copyPomFiles(namespace)
 
         var filesToUpload: Sequence<DigitalOceanFile> =
@@ -82,6 +84,22 @@ class UploadToDigitalOceanSpacesService(
 
         filesToUpload
             .forEach(digitalOceanSpacesClient::uploadFile)
+    }
+
+    private fun validateJarExists(namespace: Namespace) {
+        val jarFile = File(buildDir, namespace.jarPath)
+        if (!jarFile.exists()) {
+            val libsDir = File(buildDir, "libs")
+            val availableFiles = libsDir.listFiles()
+                ?.filter { it.extension == "jar" }
+                ?.joinToString(", ") { it.name }
+                ?: "none"
+            throw GradleException(
+                "Main jar file not found: ${jarFile.absolutePath}. " +
+                "Expected '${namespace.jarName}' but available jars in libs/: [$availableFiles]. " +
+                "If the jar task uses a custom archiveBaseName, ensure it matches the project name '${namespace.artifactId}'."
+            )
+        }
     }
 
     private fun createJar(namespace: Namespace): Sequence<DigitalOceanFile> = sequenceOf(

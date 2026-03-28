@@ -65,6 +65,11 @@ class DigitalOceanSpacesPublishPluginService {
                     dependsOn(it)
                 }
 
+                tasks.findByName("generateHashes")?.also {
+                    mustRunAfter("assembleMavenArtifacts")
+                    dependsOn(it)
+                }
+
                 // If using the maven-publish plugin, also depend on publish tasks
                 plugins.withId("maven-publish") {
                     dependsOn("generatePomFileFor${capitalizedPublicationName}Publication")
