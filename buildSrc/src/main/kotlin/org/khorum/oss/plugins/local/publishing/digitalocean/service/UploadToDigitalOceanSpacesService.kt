@@ -7,6 +7,8 @@ import org.khorum.oss.plugins.local.publishing.digitalocean.domain.Namespace
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 import java.io.File
 import java.security.MessageDigest
 
@@ -85,8 +87,42 @@ class UploadToDigitalOceanSpacesService(
                 ascIfExists(namespace.pluginJarAscKey, namespace.pluginJarAscPath)
         }
 
+        val uploadedKeys = mutableListOf<String>()
+
         filesToUpload
+            .onEach { uploadedKeys.add(it.key) }
             .forEach(digitalOceanSpacesClient::uploadFile)
+
+        verifyUploadedFiles(uploadedKeys)
+    }
+
+    private fun verifyUploadedFiles(keys: List<String>) {
+        val bucket = requireNotNull(digitalOceanSpacesClient.ext.bucket) { "bucket is required" }
+        val logger = project.logger
+
+        logger.lifecycle("  | Verifying ${keys.size} uploaded artifacts in $bucket...")
+
+        val missingKeys = keys.filter { key ->
+            try {
+                val request = HeadObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build()
+                checkS3Client.headObject(request)
+                false
+            } catch (_: NoSuchKeyException) {
+                true
+            }
+        }
+
+        if (missingKeys.isNotEmpty()) {
+            val missing = missingKeys.joinToString("\n") { "  - $it" }
+            throw GradleException(
+                "Verification failed: ${missingKeys.size} of ${keys.size} artifacts are missing from $bucket:\n$missing"
+            )
+        }
+
+        logger.lifecycle("  | Verification passed: all ${keys.size} artifacts confirmed present in $bucket")
     }
 
     private fun validateJarExists(namespace: Namespace) {
